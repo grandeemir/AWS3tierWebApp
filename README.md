@@ -1,6 +1,6 @@
 # Secure 3-Tier AWS Web App (Terraform)
 
-![Architecture](../assets/Automated%20Secure%20Multi-tier%20Web%20Application.png)
+![Architechture Diagram](<assets/Automated Secure Multi-tier Web Application.png>)
 
 Production-style Terraform for a secure, automated 3-tier web application on AWS.
 
