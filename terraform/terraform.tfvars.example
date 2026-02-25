@@ -1,0 +1,18 @@
+project_name  = "secure-3tier"
+environment   = "dev"
+aws_region    = "us-east-1"
+
+# Required secret (set your own strong password)
+db_password = "ChangeThisStrongPassword123!"
+
+# Optional alarm email for SNS subscription
+alarm_email = "you@example.com"
+
+# Optional HTTPS setup
+enable_https        = false
+acm_certificate_arn = null
+
+# Optional Route53 alias setup
+enable_route53_record = false
+route53_zone_id       = null
+route53_record_name   = null

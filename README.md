@@ -1,71 +1,71 @@
-# Highly Available Web App — Terraform
+![Architechture Diagram](<assets/Automated Secure Multi-tier Web Application.png>)
 
-**Architecture:** User → ALB → EC2 (Auto Scaling) → S3 (static assets)
+Automated Secure Multi-Tier Web Application with Logging & Alerts
 
-Terraform project for a highly available web application on AWS, using:
+Goal: Deploy a traditional 3-tier web app (web, app, database) on AWS with security, monitoring, and automation baked in. This shows you can handle real-world enterprise architecture, not just serverless apps.
 
-- **VPC** with 2 AZs, public + private subnets, Internet Gateway + NAT Gateways  
-- **ALB** in public subnets  
-- **Auto Scaling Group** with EC2 in private subnets  
-- **S3** bucket for static assets  
-- **IAM** roles for EC2 (S3 access)
+Step 1: Architecture
 
-## Terraform Concepts Used
+Web Tier: EC2 instances behind an Application Load Balancer (ALB).
 
-| Concept | Where |
-|--------|--------|
-| **count** | Public/private subnets, NAT gateways, EIPs, route table associations |
-| **for_each** | Private route tables (per AZ) and their associations |
-| **Security groups** | ALB (80/443 from internet), EC2 (80 from ALB only) |
-| **Data sources** | AMI lookup (`data.aws_ami`), caller identity (`data.aws_caller_identity`) |
-| **user_data** | Launch template: install nginx, create simple index page |
+App Tier: EC2 or ECS (containerized) for business logic.
 
-## Prerequisites
+Database Tier: RDS (PostgreSQL or MySQL) with Multi-AZ for high availability.
 
-- [Terraform](https://www.terraform.io/downloads) >= 1.0  
-- AWS CLI configured (credentials + region) or env vars `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION`
+Networking: Use a VPC with public and private subnets, NAT Gateway, and security groups.
 
-## Usage
+Step 2: Security Features
 
-```bash
-terraform init
-terraform plan
-terraform apply
-```
+Identity & Access
 
-After apply, use the ALB DNS name to access the app:
+IAM roles for EC2/ECS with least privilege.
 
-```bash
-terraform output app_url
-curl $(terraform output -raw app_url)
-```
+Users access app via Cognito or custom auth.
 
-## Outputs
+Network Security
 
-| Output | Description |
-|--------|-------------|
-| `app_url` | HTTP URL of the web app |
-| `alb_dns_name` | ALB DNS name |
-| `s3_bucket_static_assets` | S3 bucket for static assets |
-| `vpc_id`, `private_subnet_ids`, `public_subnet_ids` | Network IDs |
+Security groups and NACLs restrict traffic to necessary ports.
 
-## Variables
+Public subnets only for ALB; private subnets for app and DB.
 
-See `variables.tf`. Examples:
+Enable VPC Flow Logs for monitoring.
 
-- `aws_region` — default `us-east-1`  
-- `availability_zones` — default `["us-east-1a", "us-east-1b"]`  
-- `asg_min_size`, `asg_max_size`, `asg_desired_capacity`  
-- `instance_type` — default `t3.micro`
+Data Security
 
-Override via `-var`, `-var-file`, or `*.auto.tfvars`.
+Enable encryption at rest for RDS (KMS) and S3 (if used).
 
-## Cleanup
+Enable encryption in transit using SSL/TLS.
 
-```bash
-terraform destroy
-```
+Web Security
 
-## SAA Relevance
+Attach AWS WAF to ALB for protection against SQL injection, XSS, etc.
 
-This setup touches a large portion of SAA topics: VPC, subnets, IGW/NAT, ALB, ASG, EC2, S3, IAM, security groups, and high availability across AZs.
+Enable AWS Shield Standard for DDoS protection.
+
+Step 3: Automation & Infrastructure as Code
+
+Use Terraform or CloudFormation to deploy the entire stack.
+
+Include CI/CD pipeline (CodePipeline + CodeBuild) to deploy app updates automatically.
+
+Auto-scaling for EC2/ECS based on load.
+
+Step 4: Monitoring & Alerts
+
+Enable CloudWatch Alarms for CPU, memory, or RDS connections.
+
+Configure CloudTrail for auditing all AWS API activity.
+
+Optional: integrate SNS or Slack for alert notifications.
+
+Add GuardDuty for threat detection.
+
+Step 5: Showcase & Resume Value
+
+This project demonstrates hands-on knowledge of core AWS services: EC2, RDS, ALB, VPC, CloudWatch, CloudTrail, WAF, IAM.
+
+Shows security best practices in action: least privilege, encryption, monitoring, alerts.
+
+Use a diagram to highlight the multi-tier architecture, showing public/private subnets and security layers.
+
+Include a README explaining security choices, automation, and architecture reasoning.
